@@ -1,14 +1,38 @@
 service: serverless-http-hello-world
-frameworkVersion: '3'
+frameworkVersion: "3"
 
 provider:
   name: aws
   runtime: nodejs18.x
+  profile: serverless.demarchenac
+
+package:
+  individually: true
+  excludeDevDependencies: true
+  patterns:
+    - "!node_modules/**"
+
+plugins:
+  - serverless-s3-sync
+
+custom:
+  s3Sync:
+    - bucketName: demarchenac-serverless-http-hello-world-bucket-01
+      localDir: upload-cache
+      acl: public-read
 
 functions:
-  api:
-    handler: index.handler
+  getUser:
+    handler: lambdas/endpoints/getUser.handler
     events:
-      - httpApi:
-          path: /
-          method: get
+      - http:
+          path: get-user/{ID}
+          method: GET
+          cors: true
+
+resources:
+  Resources:
+    DemarchenacTestBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: demarchenac-serverless-http-hello-world-bucket-01
