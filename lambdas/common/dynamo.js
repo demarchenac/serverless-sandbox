@@ -3,6 +3,7 @@ const {
   DynamoDBDocumentClient,
   GetCommand,
   PutCommand,
+  DeleteCommand,
 } = require("@aws-sdk/lib-dynamodb");
 
 const client = new DynamoDBClient({});
@@ -68,6 +69,34 @@ const Dynamo = {
     }
 
     return data;
+  },
+
+  async delete(ID, TableName) {
+    if (!ID) {
+      throw Error(`Missing the ID property`);
+    }
+
+    const params = {
+      TableName,
+      Key: {
+        ID,
+      },
+    };
+
+    const data = await documentClient.send(new GetCommand(params));
+
+    if (!data || (data && !data.Item))
+      throw new Error(`User with ID (${ID}) does not exists on ${TableName}`);
+
+    const response = await documentClient.send(new DeleteCommand(params));
+
+    if (!response) {
+      throw Error(
+        `There was an error deleting ID (${ID}) in table ${TableName}`
+      );
+    }
+
+    return data.Item;
   },
 };
 

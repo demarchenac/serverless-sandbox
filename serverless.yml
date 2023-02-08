@@ -60,6 +60,13 @@ functions:
           path: update-player-score/{ID}
           method: PUT
           cors: true
+  deletePlayerScore:
+    handler: lambdas/endpoints/deletePlayerScore.handler
+    events:
+      - http:
+          path: delete-player-score/{ID}
+          method: DELETE
+          cors: true
 
 resources:
   Resources:
