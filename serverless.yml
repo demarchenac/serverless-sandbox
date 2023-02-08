@@ -5,6 +5,15 @@ provider:
   name: aws
   runtime: nodejs18.x
   profile: serverless.demarchenac
+  environment:
+    tableName: ${self:custom.tableName}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:*
+          Resource: "*"
 
 package:
   individually: true
@@ -28,6 +37,13 @@ functions:
     events:
       - http:
           path: get-user/{ID}
+          method: GET
+          cors: true
+  getPlayerScore:
+    handler: lambdas/endpoints/getPlayerScore.handler
+    events:
+      - http:
+          path: get-player-score/{ID}
           method: GET
           cors: true
 
