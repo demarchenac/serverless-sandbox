@@ -1,5 +1,9 @@
 const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
-const { DynamoDBDocumentClient, GetCommand } = require("@aws-sdk/lib-dynamodb");
+const {
+  DynamoDBDocumentClient,
+  GetCommand,
+  PutCommand,
+} = require("@aws-sdk/lib-dynamodb");
 
 const client = new DynamoDBClient({});
 
@@ -43,6 +47,27 @@ const Dynamo = {
     console.log(data);
 
     return data.Item;
+  },
+
+  async put(data, TableName) {
+    if (!data || (data && !data.ID)) {
+      throw Error(`Data is missing the ID property`);
+    }
+
+    const params = {
+      TableName,
+      Item: data,
+    };
+
+    const response = await documentClient.send(new PutCommand(params));
+
+    if (!response) {
+      throw Error(
+        `There was an error inserting ID (${ID}) in table ${TableName}`
+      );
+    }
+
+    return data;
   },
 };
 
