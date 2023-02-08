@@ -16,6 +16,7 @@ plugins:
   - serverless-s3-sync
 
 custom:
+  tableName: player-points
   s3Sync:
     - bucketName: demarchenac-serverless-http-hello-world-bucket-01
       localDir: upload-cache
@@ -36,3 +37,14 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: demarchenac-serverless-http-hello-world-bucket-01
+    DemarchenacDynamoDBTestTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.tableName}
+        AttributeDefinitions:
+          - AttributeName: ID
+            AttributeType: S
+        KeySchema:
+          - AttributeName: ID
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
